@@ -15,6 +15,8 @@ const customerSchema = new Schema(
       required: false,
       enum: ["Individual", "Business", "VIP"],
     },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
   },
   {
     timestamps: true,
