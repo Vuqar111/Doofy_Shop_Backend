@@ -68,17 +68,15 @@ export const forgotPasswordCustomer = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a secure token (expires in 1 hour)
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpire = Date.now() + 3600000; // 1 hour
+    const resetTokenExpire = Date.now() + 3600000; // 1 hour from now
 
-    // Store the token in the database
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = resetTokenExpire;
+    // Ensure Mongoose tracks the changes
+    user.set("resetPasswordToken", resetToken);
+    user.set("resetPasswordExpires", resetTokenExpire);
     await user.save();
-
     // Create password reset link
-    const resetLink = `https://doofy-website.vercel.app/reset-password?token=${resetToken}`;
+    const resetLink = `https://doofy-website.vercel.app/auth/reset-password?token=${resetToken}`;
 
     // Send email with the reset link
     const recipient = email;
