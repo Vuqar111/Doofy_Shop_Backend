@@ -1,6 +1,6 @@
 // customerRoutes.ts
-import express from "express";
-import { getCustomerProfile} from "../controllers/customer/customerGetProfileController";
+import express, { RequestHandler } from "express";
+import {getCustomerProfile} from "../controllers/customer/customerGetProfileController";
 import {isCustomerAuth} from "../middleware/customerMiddleware";
 import {changePassword} from "../controllers/customer/customerAuthController";
 import {updateCustomerProfile} from "../controllers/customer/customerUpdateController";
@@ -8,8 +8,9 @@ import {updateCustomerProfile} from "../controllers/customer/customerUpdateContr
 
 const router = express.Router();
 
-// router.get("/", isCustomerAuth, getCustomerProfile);
-// router.put("/update", isCustomerAuth, updateCustomerProfile);
+router.get("/", isCustomerAuth as RequestHandler, getCustomerProfile as RequestHandler);
+router.get("/", isCustomerAuth as RequestHandler, updateCustomerProfile as RequestHandler);
+
 // router.put("/update/password", isCustomerAuth, changePassword);
 
 export default router;
