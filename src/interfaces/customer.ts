@@ -9,5 +9,7 @@ export interface ICustomer extends Document {
   phoneNumber: string;
   password: string;
   customer_type:string
+  resetPasswordToken: string;
+  resetPasswordExpires: number;
 }
 

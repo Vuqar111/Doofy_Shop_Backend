@@ -1,6 +1,7 @@
 // customerAuthController.ts
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import Customer from "../../models/customer";
 import { sendNotification } from "../../middleware/notificationMiddleware";
 import { CustomerRequest, generateToken } from "../../middleware/customerMiddleware";
@@ -57,6 +58,7 @@ export const loginCustomer = async (
   }
 };
 
+
 export const forgotPasswordCustomer = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
@@ -66,28 +68,27 @@ export const forgotPasswordCustomer = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a 6-digit random password
-    const generatedPassword = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    // Generate a secure token (expires in 1 hour)
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpire = Date.now() + 3600000; // 1 hour
 
-    // Hash the generated password
-    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-
-    // Update user's password in the database
-    user.password = hashedPassword;
+    // Store the token in the database
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = resetTokenExpire;
     await user.save();
 
-    // Send email notification with the generated password
+    // Create password reset link
+    const resetLink = `https://doofy-website.vercel.app/reset-password?token=${resetToken}`;
+
+    // Send email with the reset link
     const recipient = email;
-    const subject = "Your new password";
-    const text = `Your password has been reset. Your new password is: ${generatedPassword}`;
-    const emailTitle = "New Password";
+    const subject = "Password Reset Request";
+    const text = `Click the link below to reset your password:\n\n${resetLink}`;
+    const emailTitle = "Password Reset";
     sendNotification(recipient, subject, text, emailTitle)(req, res, () => {});
 
     res.status(200).json({
-      message:
-        "Password reset successful. Check your email for the new password.",
+      message: "Password reset link sent. Check your email.",
       success: true,
     });
   } catch (error) {
@@ -96,6 +97,32 @@ export const forgotPasswordCustomer = async (req: Request, res: Response) => {
   }
 };
 
+
+
+export const resetPasswordCustomer = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+    const user = await Customer.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }, // Ensure token is still valid
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    // Hash new password
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.resetPasswordToken = "";
+    user.resetPasswordExpires = 0;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 
 export const changePassword = async (req: CustomerRequest, res: Response) => {
