@@ -17,7 +17,6 @@ interface IProductModel {
 export const createOrder = async (req: CustomerRequest, res: Response) => {
   try {
     const {
-      customerId,
       payment,
       products,
       delivery,
@@ -74,7 +73,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
 
     // Find the user
     const newOrder: IOrder = new Order({
-      customerId,
+      customerId: req.body.email,
       products: productsWithTotalPrice,
       status: "Created",
       orderNumber,

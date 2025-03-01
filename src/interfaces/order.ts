@@ -32,7 +32,7 @@ export interface IDelivery extends Document {
 
 // Define Order Schema
 export interface IOrder extends Document {
-  customerId: mongoose.Types.ObjectId;
+  customerId: string;
   orderNumber: string;
   delivery: IDelivery;
   payment: IPayment;

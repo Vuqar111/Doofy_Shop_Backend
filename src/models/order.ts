@@ -14,7 +14,7 @@ const ProductSchema = new Schema<IOrderedProduct>({
 
 const OrderSchema = new Schema<IOrder>(
   {
-    customerId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    customerId: { type: String, required: true },
     orderNumber: { type: String, required: true },
     subTotalCost: { type: Number, required: true },
     discount: { type: Number, required: true },
