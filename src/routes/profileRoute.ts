@@ -9,7 +9,7 @@ import { changePassword } from "../controllers/customer/customerAuthController";
 const router = express.Router();
 
 router.get("/", isCustomerAuth as RequestHandler, getCustomerProfile as RequestHandler);
-router.get("/", isCustomerAuth as RequestHandler, updateCustomerProfile as RequestHandler);
+router.put("/update", isCustomerAuth as RequestHandler, updateCustomerProfile as RequestHandler);
 router.put("/change-password", changePassword as RequestHandler);
 
 export default router;
