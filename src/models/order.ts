@@ -17,7 +17,7 @@ const OrderSchema = new Schema<IOrder>(
     customerId: { type: String, required: true },
     orderNumber: { type: String, required: true },
     subTotalCost: { type: Number, required: true },
-    discount: { type: Number, required: true },
+    discount: { type: String, required: true },
     status: {
       type: String,
       required: true,

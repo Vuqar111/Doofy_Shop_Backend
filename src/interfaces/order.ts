@@ -37,7 +37,7 @@ export interface IOrder extends Document {
   delivery: IDelivery;
   payment: IPayment;
   subTotalCost: number;
-  discount: number;
+  discount: string;
   status: string;
   totalEstimate: number;
   products: IOrderedProduct[];

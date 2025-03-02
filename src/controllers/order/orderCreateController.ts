@@ -1,16 +1,17 @@
 import { Response } from "express";
 import Order from "../../models/order";
+import Discount from "../../models/discount";
 import { IOrder } from "../../interfaces/order";
 import { v4 as uuidv4 } from "uuid";
 import { CustomerRequest } from "../../middleware/customerMiddleware";
 let orderCounter = 0;
 
 interface IProductModel {
-  name:string;
+  name: string;
   productId: string;
   price: string;
   qty: string;
-  code:string;
+  code: string;
   totalPrice?: number;
 }
 
@@ -21,9 +22,19 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       products,
       delivery,
       discount,
+      customerId,
       notes
     } = req.body;
     // Calculate subtotal cost
+    let discountValue = 0;
+    if (discount) {
+      const discountDoc = await Discount.findOne({ code: discount });
+      if (discountDoc) {
+        discountValue = discountDoc.value;
+      }
+    }
+
+
     const subTotalCost = products.reduce(
       (acc: number, product: any) =>
         acc + product.price * product.qty,
@@ -34,14 +45,12 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
     const finalCost = products.reduce(
       (acc: number, product: any) =>
         acc +
-        product.price * product.qty * (1 - (discount ? discount : 0) / 100),
+        product.price * product.qty * (1 - discountValue / 100),
       0 // Initial value for reduce
     );
-    
+
 
     // Calculate total estimate
-
-
     const roundToDecimalPlaces = (number: number, decimalPlaces: number) => {
       const factor = Math.pow(10, decimalPlaces);
       return Math.round(number * factor) / factor;
@@ -51,10 +60,10 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       // Convert strings to numbers
       const price = parseFloat(product.price);
       const qty = parseFloat(product.qty);
-    
+
       // Calculate total price
       const totalPrice = price * qty;
-    
+
       return {
         ...product,
         totalPrice: roundToDecimalPlaces(totalPrice, 2) // Round to 2 decimal places
@@ -73,7 +82,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
 
     // Find the user
     const newOrder: IOrder = new Order({
-      customerId: req.body.email,
+      customerId,
       products: productsWithTotalPrice,
       status: "Created",
       orderNumber,
@@ -85,13 +94,21 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       notes
     });
 
-    
+
     // Save the new order
     if (products?.length === 0) {
       res.status(500).json({ error: "Internal Server Error" });
     }
     const savedOrder: IOrder = await newOrder.save();
- 
+
+    if (discount) {
+      await Discount.updateOne(
+        { code: discount },
+        { $inc: { usedCount: 1 } }
+      );
+    }
+
+
     res.status(201).json({ success: true, savedOrder });
   } catch (error: any) {
     console.error("Error creating order:", error.message);
