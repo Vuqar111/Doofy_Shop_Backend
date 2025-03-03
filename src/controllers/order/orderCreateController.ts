@@ -1,7 +1,7 @@
 import { Response } from "express";
 import Order from "../../models/order";
-import Discount from "../../models/discount";
 import Customer from "../../models/customer";
+import Discount from "../../models/discount";
 import { IOrder } from "../../interfaces/order";
 import { v4 as uuidv4 } from "uuid";
 import { CustomerRequest } from "../../middleware/customerMiddleware";
@@ -23,24 +23,8 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       products,
       delivery,
       discount,
-      customerId,
       notes
     } = req.body;
-
-
-    let customer = await Customer.findOne({ email: customerId });
-
-    // If customer doesn't exist, create a new one
-    if (!customer) {
-      customer = new Customer({
-        fullName: `${delivery?.first_name} ${delivery?.last_name}`,
-        email: customerId,
-        phoneNumber: delivery?.phone,
-        customer_type: "Individual",
-      });
-      await customer.save();
-    }
-
 
 
     // Calculate subtotal cost
@@ -95,12 +79,9 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
     const orderNumberSuffix = orderCounter === 0 ? "1" : `${orderCounter + 1}`;
     const orderNumber = `${orderNumberPrefix}.${orderNumberSuffix}`;
 
-
-
-
     // Find the user
     const newOrder: IOrder = new Order({
-      customerId,
+      customerId: req.customer?._id,
       products: productsWithTotalPrice,
       status: "Created",
       orderNumber,

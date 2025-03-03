@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, mongo } from "mongoose";
 
 export interface IOrderedProduct extends Document {
     productId: mongoose.Types.ObjectId;
@@ -32,7 +32,7 @@ export interface IDelivery extends Document {
 
 // Define Order Schema
 export interface IOrder extends Document {
-  customerId: string;
+  customerId: mongoose.Types.ObjectId;
   orderNumber: string;
   delivery: IDelivery;
   payment: IPayment;

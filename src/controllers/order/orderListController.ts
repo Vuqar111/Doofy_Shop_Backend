@@ -18,10 +18,8 @@ export const getAllCustomerOrders = async (
       return;
     }
 
-    const customerEmail = customer.email;
-
     // Find orders associated with the customer's email
-    const orders = await Order.find({ customerId: customerEmail }).sort({ createdAt: -1 });
+    const orders = await Order.find({ customerId: req.customer?._id }).sort({ createdAt: -1 });
 
     res.status(200).json(orders);
   } catch (error: any) {
