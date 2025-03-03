@@ -9,7 +9,7 @@ const customerSchema = new Schema(
     address: { type: String, required: false },
     phoneNumber: { type: String, required: false },
     company: { type: String, required: false },
-    password: { type: String, required: true },
+    password: { type: String, required: false },
     customer_type: {
       type: String,
       required: false,
