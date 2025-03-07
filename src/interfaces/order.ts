@@ -1,7 +1,6 @@
 import mongoose, { Document, mongo } from "mongoose";
 
 export interface IOrderedProduct extends Document {
-    productId: mongoose.Types.ObjectId;
     code: string;
     name: string;
     price: number;

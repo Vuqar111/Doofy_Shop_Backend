@@ -3,7 +3,6 @@ import mongoose, { Schema } from "mongoose";
 import { IOrder,IOrderedProduct, IDelivery, IPayment } from "../interfaces/order";
 
 const ProductSchema = new Schema<IOrderedProduct>({
-  productId: { type: mongoose.Schema.Types.ObjectId, required: true },
   name: { type: String, required: true },
   price: { type: Number, required: true },
   code: {type: String, required: true},

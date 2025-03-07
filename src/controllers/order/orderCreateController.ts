@@ -27,6 +27,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
     } = req.body;
 
 
+
     // Calculate subtotal cost
     let discountValue = 0;
     if (discount) {
