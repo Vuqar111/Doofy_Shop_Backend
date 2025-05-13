@@ -22,8 +22,7 @@ export interface IDelivery extends Document {
   country: string;
   phone: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  full_name: string;
   apartment: string;
 }
 
