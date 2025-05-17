@@ -1,12 +1,13 @@
 // models/offer.ts
 import mongoose, { Schema } from "mongoose";
-import { IOrder,IOrderedProduct, IDelivery, IPayment } from "../interfaces/order";
+import { IOrder,IOrderedProduct } from "../interfaces/order";
 
 const ProductSchema = new Schema<IOrderedProduct>({
   name: { type: String, required: true },
   price: { type: Number, required: true },
   code: {type: String, required: true},
   qty: { type: Number, required: true },
+  image: { type: String, required: true },
   color: { type: String, required: true },
   totalPrice: { type: Number, required: false },
 });

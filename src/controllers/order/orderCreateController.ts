@@ -12,6 +12,7 @@ interface IProductModel {
   productId: string;
   price: string;
   qty: string;
+  image: string;
   code: string;
   totalPrice?: number;
 }
@@ -26,6 +27,8 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       notes
     } = req.body;
 
+
+    console.log(req.body.products);
 
 
     // Calculate subtotal cost
@@ -90,7 +93,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       payment,
       delivery,
       discount,
-      totalEstimate: finalCost,
+      totalEstimate: finalCost + 10,
       notes
     });
 

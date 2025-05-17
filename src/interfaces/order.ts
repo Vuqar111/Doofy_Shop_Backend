@@ -6,6 +6,7 @@ export interface IOrderedProduct extends Document {
     price: number;
     qty: number;
     color: string;
+    image: string;
     totalPrice: number;
   }
   
