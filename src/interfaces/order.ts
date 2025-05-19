@@ -19,7 +19,7 @@ export interface IPayment extends Document {
 export interface IDelivery extends Document {
   address: string;
   city: string;
-  postalCode: string;
+  postal_code: string;
   country: string;
   phone: string;
   email: string;
