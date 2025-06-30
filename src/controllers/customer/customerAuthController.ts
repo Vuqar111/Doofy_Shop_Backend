@@ -86,7 +86,7 @@ export const forgotPasswordCustomer = async (req: Request, res: Response) => {
     );
 
     // Create password reset link
-    const resetLink = `https://doofy-website.vercel.app/auth/reset-password?token=${resetToken}`;
+    const resetLink = `https://www.hellodofi.store/az/auth/reset-password?token=${resetToken}`;
 
     // Send email with the reset link
     const recipient = email;

@@ -3,8 +3,8 @@ import nodemailer from "nodemailer";
 import Notification from "../models/notification";
 import { getEmailBody } from "../utils/parentPasswordTemplate";
 // Email configuration
-const EMAIL_USERNAME = "c8657545@gmail.com";
-const EMAIL_PASSWORD = "bcozssymjajpqicg";
+const EMAIL_USERNAME = "dofi.robot@gmail.com";
+const EMAIL_PASSWORD = "hudkgrntdovwxycl";
 const SMTP_HOST = "smtp.gmail.com";
 const SMTP_PORT = 465;
 
@@ -31,36 +31,36 @@ export const sendNotification: (
   text,
   emailTitle
 ) => {
-  return (req, res, next) => {
-    const email = {
-      emailTitle,
-      recipient,
-      subject,
-      text,
-    };
-    // Compose email content
-    const mailOptions = {
-      from: EMAIL_USERNAME,
-      to: recipient,
-      subject: subject,
-      text: text,
-      html: getEmailBody(email),
-    };
+    return (req, res, next) => {
+      const email = {
+        emailTitle,
+        recipient,
+        subject,
+        text,
+      };
+      // Compose email content
+      const mailOptions = {
+        from: EMAIL_USERNAME,
+        to: recipient,
+        subject: subject,
+        text: text,
+        html: getEmailBody(email),
+      };
 
-    // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error occurred while sending email:", error.message);
-      } else {
-        Notification.create({
-          receipent: recipient,
-          message: text,
-          purpose: subject,
-        });
-      }
-    });
+      // Send email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error occurred while sending email:", error.message);
+        } else {
+          Notification.create({
+            receipent: recipient,
+            message: text,
+            purpose: subject,
+          });
+        }
+      });
 
-    // Continue with the request chain
-    next();
+      // Continue with the request chain
+      next();
+    };
   };
-};
