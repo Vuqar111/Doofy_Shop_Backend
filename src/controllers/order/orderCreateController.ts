@@ -1,6 +1,5 @@
 import { Response } from "express";
 import Order from "../../models/order";
-import Customer from "../../models/customer";
 import Discount from "../../models/discount";
 import { IOrder } from "../../interfaces/order";
 import { v4 as uuidv4 } from "uuid";
@@ -26,9 +25,6 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       discount,
       notes
     } = req.body;
-    console.log(req.body)
-
-
 
 
     // Calculate subtotal cost
@@ -99,9 +95,10 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
 
 
     // Save the new order
-    if (products?.length === 0) {
-      res.status(500).json({ error: "Internal Server Error" });
+    if (!products || products.length === 0) {
+      return res.status(400).json({ error: "No products provided" });
     }
+
     const savedOrder: IOrder = await newOrder.save();
 
     if (discount) {
@@ -114,7 +111,11 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
 
     res.status(201).json({ success: true, savedOrder });
   } catch (error: any) {
-    console.error("Error creating order:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error creating order:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+      stack: error.stack, // Helps you trace the issue
+    });
   }
 };
