@@ -26,6 +26,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
       discount,
       notes
     } = req.body;
+    console.log(req.body)
 
 
 
@@ -84,7 +85,7 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
 
     // Find the user
     const newOrder: IOrder = new Order({
-      customerId: req.customer?._id,
+      customerId: req.body.customerId,
       products: productsWithTotalPrice,
       status: "Created",
       orderNumber,

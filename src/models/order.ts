@@ -37,9 +37,9 @@ const OrderSchema = new Schema<IOrder>(
     },
     delivery: {
       address: { type: String, required: true },
-      city: { type: String, required: true },
+      city: { type: String, required: false },
       postal_code: { type: String, required: false },
-      country: { type: String, required: true },
+      country: { type: String, required: false },
       phone: { type: String, required: true },
       email: { type: String, required: true },
       full_name: { type: String, required: true },
