@@ -28,7 +28,6 @@ export const createOrder = async (req: CustomerRequest, res: Response) => {
     } = req.body;
 
 
-    console.log(req.body.products);
 
 
     // Calculate subtotal cost

@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
 import nodemailer from "nodemailer";
 import Notification from "../models/notification";
 import { getEmailBody } from "../utils/parentPasswordTemplate";
-// Email configuration
+
 const EMAIL_USERNAME = "dofi.robot@gmail.com";
 const EMAIL_PASSWORD = "hudkgrntdovwxycl";
 const SMTP_HOST = "smtp.gmail.com";
@@ -12,55 +11,48 @@ const SMTP_PORT = 465;
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
-  secure: true, // true for 465, false for other ports
+  secure: true,
   auth: {
     user: EMAIL_USERNAME,
     pass: EMAIL_PASSWORD,
   },
 });
 
-// Middleware to send email notifications
-export const sendNotification: (
-  recipient: string | undefined,
+/**
+ * Sends an email and logs the notification.
+ */
+export const sendNotification = async (
+  recipient: string,
   subject: string,
   text: string,
   emailTitle: string
-) => (req: Request, res: Response, next: NextFunction) => void = (
-  recipient,
-  subject,
-  text,
-  emailTitle
-) => {
-    return (req, res, next) => {
-      const email = {
-        emailTitle,
-        recipient,
-        subject,
-        text,
-      };
-      // Compose email content
-      const mailOptions = {
-        from: EMAIL_USERNAME,
-        to: recipient,
-        subject: subject,
-        text: text,
-        html: getEmailBody(email),
-      };
-
-      // Send email
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error("Error occurred while sending email:", error.message);
-        } else {
-          Notification.create({
-            receipent: recipient,
-            message: text,
-            purpose: subject,
-          });
-        }
-      });
-
-      // Continue with the request chain
-      next();
-    };
+): Promise<void> => {
+  const email = {
+    emailTitle,
+    recipient,
+    subject,
+    text,
   };
+
+  const mailOptions = {
+    from: EMAIL_USERNAME,
+    to: recipient,
+    subject: subject,
+    text: text,
+    html: getEmailBody(email),
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.response);
+
+    await Notification.create({
+      receipent: recipient,
+      message: text,
+      purpose: subject,
+    });
+  } catch (error) {
+    console.error("❌ Failed to send email:", error);
+    throw new Error("Email failed to send. Try again later.");
+  }
+};
